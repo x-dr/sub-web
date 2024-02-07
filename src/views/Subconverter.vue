@@ -210,7 +210,7 @@ export default {
           ClashR: "clashr",
           Surge2: "surge&ver=2",
         },
-        backendOptions: [{ value: "http://127.0.0.1:25500/sub?" }],
+        backendOptions: [{ value: defaultBackend }],
         remoteConfig: [
           {
             label: "universal",
@@ -469,22 +469,29 @@ export default {
 
       this.loading = true;
 
-      let data = new FormData();
-      data.append("longUrl", btoa(this.customSubUrl));
+      // let data = new FormData();
+      // console.log(this.customSubUrl);
+      // data.append("url", this.customSubUrl);
+      // // console.log(data.get("longUrl"));
+      // console.log(data);
+      let data = {
+        url: this.customSubUrl
+      };
 
       this.$axios
         .post(shortUrlBackend, data, {
           header: {
-            "Content-Type": "application/form-data; charset=utf-8"
+            "Content-Type":"application/json; charset=UTF-8"
           }
         })
         .then(res => {
-          if (res.data.Code === 1 && res.data.ShortUrl !== "") {
-            this.curtomShortSubUrl = res.data.ShortUrl;
-            this.$copyText(res.data.ShortUrl);
+          // console.log(res);
+          if (res.status === 200 && res.data.link !== "") {
+            this.curtomShortSubUrl = res.data.link;
+            this.$copyText(res.data.link);
             this.$message.success("短链接已复制到剪贴板");
           } else {
-            this.$message.error("短链接获取失败：" + res.data.Message);
+            this.$message.error("短链接获取失败：" + res.data.message);
           }
         })
         .catch(() => {
